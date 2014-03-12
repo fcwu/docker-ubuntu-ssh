@@ -11,12 +11,12 @@ deb http://us.archive.ubuntu.com/ubuntu/ precise restricted\n\
 deb http://ppa.launchpad.net/chris-lea/node.js/ubuntu precise main\n\
 "> /etc/apt/sources.list
 
-RUN echo "Acquire::http { Proxy \"http://172.17.42.1:3142\"; };\n\
-Acquire::http::Proxy {\n\
-    private-ppa.launchpad.net DIRECT;\n\
-    download.virtualbox.org DIRECT;\n\
-}\n\
-" > /etc/apt/apt.conf.d/90apt-cacher-ng
+#RUN echo "Acquire::http { Proxy \"http://172.17.42.1:3142\"; };\n\
+#Acquire::http::Proxy {\n\
+#    private-ppa.launchpad.net DIRECT;\n\
+#    download.virtualbox.org DIRECT;\n\
+#}\n\
+#" > /etc/apt/apt.conf.d/90apt-cacher-ng
 
 # no Upstart or DBus
 # https://github.com/dotcloud/docker/issues/1724#issuecomment-26294856
