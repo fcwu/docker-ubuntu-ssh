@@ -35,7 +35,7 @@ ADD tty.js /tty.js/
 
 # clean up after ourselves
 RUN apt-get clean
-RUN rm /etc/apt/apt.conf.d/90apt-cacher-ng
+#RUN rm /etc/apt/apt.conf.d/90apt-cacher-ng
 
 ADD startup.sh /
 EXPOSE 22
