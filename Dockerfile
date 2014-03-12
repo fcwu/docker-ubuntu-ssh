@@ -21,7 +21,7 @@ Acquire::http::Proxy {\n\
 # no Upstart or DBus
 # https://github.com/dotcloud/docker/issues/1724#issuecomment-26294856
 RUN apt-mark hold initscripts udev plymouth mountall
-RUN dpkg-divert --local --rename --add /sbin/initctl && ln -s /bin/true /sbin/initctl
+RUN dpkg-divert --local --rename --add /sbin/initctl && ln -fs /bin/true /sbin/initctl
 
 RUN apt-get update
 
