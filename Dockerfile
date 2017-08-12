@@ -1,44 +1,50 @@
-FROM ubuntu:12.04
+FROM ubuntu:16.04
 MAINTAINER Doro Wu <fcwu.tw@gmail.com>
 
-ENV DEBIAN_FRONTEND noninteractive
+EXPOSE 3000
 
-# setup our Ubuntu sources (ADD breaks caching)
-RUN echo "deb http://us.archive.ubuntu.com/ubuntu/ precise main\n\
-deb http://us.archive.ubuntu.com/ubuntu/ precise multiverse\n\
-deb http://us.archive.ubuntu.com/ubuntu/ precise universe\n\
-deb http://us.archive.ubuntu.com/ubuntu/ precise restricted\n\
-deb http://ppa.launchpad.net/chris-lea/node.js/ubuntu precise main\n\
-"> /etc/apt/sources.list
-
-#RUN echo "Acquire::http { Proxy \"http://172.17.42.1:3142\"; };\n\
-#Acquire::http::Proxy {\n\
-#    private-ppa.launchpad.net DIRECT;\n\
-#    download.virtualbox.org DIRECT;\n\
-#}\n\
-#" > /etc/apt/apt.conf.d/90apt-cacher-ng
+ENV DEBIAN_FRONTEND=noninteractive \
+    USER=ubuntu \
+    PASS=ubuntu
 
 # no Upstart or DBus
 # https://github.com/dotcloud/docker/issues/1724#issuecomment-26294856
-RUN apt-mark hold initscripts udev plymouth mountall
-RUN dpkg-divert --local --rename --add /sbin/initctl && ln -fs /bin/true /sbin/initctl
+RUN apt-get update && apt-mark hold initscripts udev plymouth mountall && \
+    dpkg-divert --local --rename --add /sbin/initctl && ln -fs /bin/true /sbin/initctl && \
+    apt-get install -yqq --no-install-recommends \
+      openssh-server \
+      pwgen \
+      sudo \
+      vim-tiny \
+      ca-certificates \
+      curl
 
-RUN apt-get update
+RUN curl -sL https://deb.nodesource.com/setup_6.x | bash - && \
+    apt-get install nodejs
 
-# install our "base" environment
-RUN apt-get install -y --no-install-recommends openssh-server pwgen sudo vim-tiny
+COPY ./package* /src/
 
-# install tty.js
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys C7917B12
-RUN apt-get install -y --force-yes nodejs
-ADD tty.js /tty.js/
+WORKDIR /src
 
-# clean up after ourselves
-RUN apt-get clean
-#RUN rm /etc/apt/apt.conf.d/90apt-cacher-ng
+# Install build-time requirements, where compilation is needed
+RUN apt-get install -yqq \
+      build-essential \
+      python \
+    && \
+    npm i && \
+    # Perform extensive cleanup
+    apt-get remove -y \
+      build-essential \
+      python \
+    && \
+    apt-get autoclean -y && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/{cache,log}/ && \
+    rm -rf /var/lib/apt/lists/*.lz4 && \
+    rm -rf /tmp/* /var/tmp/* && \
+    rm -rf /usr/share/doc/ && \
+    rm -rf /usr/share/man/
 
-ADD startup.sh /
-EXPOSE 22
-EXPOSE 3000
-WORKDIR /
-ENTRYPOINT ["/startup.sh"]
+COPY ./src/* /src/
+
+CMD ["/src/startup.sh"]
