@@ -1,0 +1,22 @@
+{
+  "name": "docker-ubuntu-ssh",
+  "version": "1.0.0",
+  "description": "docker-ubuntu-ssh =========================",
+  "main": "package-lock.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fcwu/docker-ubuntu-ssh.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fcwu/docker-ubuntu-ssh/issues"
+  },
+  "homepage": "https://github.com/fcwu/docker-ubuntu-ssh#readme",
+  "dependencies": {
+    "tty.js": "^0.2.15"
+  }
+}
